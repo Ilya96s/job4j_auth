@@ -1,6 +1,7 @@
 package ru.job4j.auth.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.job4j.auth.model.Person;
 import ru.job4j.auth.repository.PersonRepository;
@@ -13,6 +14,7 @@ import java.util.Optional;
  *
  * @author Ilya Kaltygin
  */
+@Slf4j
 @Service
 @AllArgsConstructor
 public class PersonServiceImpl implements PersonService {
@@ -51,7 +53,14 @@ public class PersonServiceImpl implements PersonService {
      */
     @Override
     public Person save(Person person) {
-        return personRepository.save(person);
+        Person result = null;
+        try {
+            personRepository.save(person);
+            result = person;
+        } catch (Exception e) {
+            log.error("Exception in the save(Person person) method", e);
+        }
+        return result;
     }
 
     /**

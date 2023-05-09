@@ -31,11 +31,12 @@ public class PersonController {
      * Хешировать пароль пользователя и сохранить пользователя в базу данных
      *
      * @param person пользователь
+     * @return объект типа ResponseEntity
      */
     @PostMapping("/sign-up")
-    public void signUp(@RequestBody Person person) {
+    public ResponseEntity<Person> signUp(@RequestBody Person person) {
         person.setPassword(passwordEncoder.encode(person.getPassword()));
-        personService.save(person);
+        return personService.save(person) != null ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
     /**
