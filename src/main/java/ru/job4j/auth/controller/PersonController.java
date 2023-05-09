@@ -3,6 +3,7 @@ package ru.job4j.auth.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.auth.model.Person;
 import ru.job4j.auth.service.PersonService;
@@ -23,6 +24,19 @@ public class PersonController {
      * Сервис по работе с пользователями
      */
     private final PersonService personService;
+
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    /**
+     * Хешировать пароль пользователя и сохранить пользователя в базу данных
+     *
+     * @param person пользователь
+     */
+    @PostMapping("/sign-up")
+    public void signUp(@RequestBody Person person) {
+        person.setPassword(passwordEncoder.encode(person.getPassword()));
+        personService.save(person);
+    }
 
     /**
      * Найти всех пользователей
