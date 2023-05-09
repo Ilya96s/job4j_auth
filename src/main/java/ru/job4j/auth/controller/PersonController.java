@@ -85,8 +85,7 @@ public class PersonController {
      */
     @PutMapping("/")
     public ResponseEntity<Person> update(@RequestBody Person person) {
-        personService.save(person);
-        return ResponseEntity.ok().build();
+        return personService.update(person) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 
     /**
@@ -99,7 +98,6 @@ public class PersonController {
     public ResponseEntity<Person> delete(@PathVariable int id) {
         var person = new Person();
         person.setId(id);
-        personService.delete(person);
-        return ResponseEntity.ok().build();
+        return personService.delete(person) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 }

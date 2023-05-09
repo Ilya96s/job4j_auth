@@ -29,7 +29,7 @@ public class PersonServiceImpl implements PersonService {
      */
     @Override
     public List<Person> findAll() {
-        return (List<Person>) personRepository.findAll();
+        return personRepository.findAll();
     }
 
     /**
