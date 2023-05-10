@@ -36,7 +36,7 @@ public class PersonController {
     @PostMapping("/sign-up")
     public ResponseEntity<Person> signUp(@RequestBody Person person) {
         person.setPassword(passwordEncoder.encode(person.getPassword()));
-        return personService.save(person) != null ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.CONFLICT).build();
+        return personService.save(person).isPresent() ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
     /**
@@ -73,7 +73,7 @@ public class PersonController {
     @PostMapping("/")
     public ResponseEntity<Person> create(@RequestBody Person person) {
         return new ResponseEntity<Person>(
-                personService.save(person),
+                personService.save(person).get(),
                 HttpStatus.CREATED
         );
     }

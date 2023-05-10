@@ -52,11 +52,11 @@ public class PersonServiceImpl implements PersonService {
      * @return пользователь
      */
     @Override
-    public Person save(Person person) {
-        Person result = null;
+    public Optional<Person> save(Person person) {
+        Optional<Person> result = Optional.empty();
         try {
             personRepository.save(person);
-            result = person;
+            result = Optional.of(person);
         } catch (Exception e) {
             log.error("Exception in the save(Person person) method", e);
         }

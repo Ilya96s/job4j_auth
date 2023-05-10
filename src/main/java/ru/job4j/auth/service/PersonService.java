@@ -31,9 +31,9 @@ public interface PersonService {
      * Сохранить пользователя в базе данных
      *
      * @param person пользователь
-     * @return пользователь
+     * @return Optional.of(person) если пользователь сохранен успешно, иначе Optional.empty()
      */
-    Person save(Person person);
+    Optional<Person> save(Person person);
 
     /**
      * Обновить пользователя в базе данных
