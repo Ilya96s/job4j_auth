@@ -1,5 +1,6 @@
 package ru.job4j.auth.service;
 
+import ru.job4j.auth.dto.PersonDTO;
 import ru.job4j.auth.model.Person;
 
 import java.util.List;
@@ -28,6 +29,14 @@ public interface PersonService {
     Optional<Person> findById(int id);
 
     /**
+     * Найти пользователя в базе данных по логину
+     *
+     * @param login логин
+     * @return Optional.of(person) если пользователь найден, иначе Optional.empty()
+     */
+    Optional<Person> findByLogin(String login);
+
+    /**
      * Сохранить пользователя в базе данных
      *
      * @param person пользователь
@@ -50,4 +59,12 @@ public interface PersonService {
      * @return true если пользователь успешно удален, иначе false
      */
     boolean delete(Person person);
+
+    /**
+     * Обновить пароль пользователя в базе данных
+     *
+     * @param personDTO объект типа PersonDTO
+     * @return true если пароль успешно обновлен, иначе false
+     */
+    boolean updatePassword(PersonDTO personDTO);
 }

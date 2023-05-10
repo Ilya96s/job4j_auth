@@ -3,6 +3,7 @@ package ru.job4j.auth.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.job4j.auth.dto.PersonDTO;
 import ru.job4j.auth.model.Person;
 import ru.job4j.auth.repository.PersonRepository;
 
@@ -43,6 +44,17 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Optional<Person> findById(int id) {
         return personRepository.findById(id);
+    }
+
+    /**
+     * Найти пользователя в базе данных по логину
+     *
+     * @param login логин
+     * @return Optional.of(person) если пользователь найден, иначе Optional.empty()
+     */
+    @Override
+    public Optional<Person> findByLogin(String login) {
+        return personRepository.findByLogin(login);
     }
 
     /**
@@ -91,6 +103,24 @@ public class PersonServiceImpl implements PersonService {
         boolean result = false;
         if (personRepository.existsById(person.getId())) {
             personRepository.delete(person);
+            result = true;
+        }
+        return result;
+    }
+
+    /**
+     * Обновить пароль пользователя в базе данных
+     *
+     * @param personDTO объект типа PersonDTO
+     * @return true если пользователь успешно обновлен, иначе false
+     */
+    @Override
+    public boolean updatePassword(PersonDTO personDTO) {
+        boolean result = false;
+        var optionalPerson = personRepository.findByLogin(personDTO.getLogin());
+        if (optionalPerson.isPresent()) {
+            optionalPerson.get().setPassword(personDTO.getPassword());
+            personRepository.save(optionalPerson.get());
             result = true;
         }
         return result;

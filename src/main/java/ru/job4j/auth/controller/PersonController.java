@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.job4j.auth.dto.PersonDTO;
 import ru.job4j.auth.model.Person;
 import ru.job4j.auth.service.PersonService;
 
@@ -121,6 +122,21 @@ public class PersonController {
             throw new IllegalArgumentException("Password must be at least 5 characters long");
         }
         return personService.update(person) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
+
+    /**
+     * Обновить пароль пользователя
+     *
+     * @param personDTO объект типа PersonDTO
+     * @return объект типа ResponseEntity
+     */
+    @PatchMapping("/")
+    public ResponseEntity<PersonDTO> updatePassword(@RequestBody PersonDTO personDTO) {
+        var person = personService.findByLogin(personDTO.getLogin());
+        if (person.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with this login was not found");
+        }
+        return personService.updatePassword(personDTO) ? ResponseEntity.status(HttpStatus.OK).build() : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     /**
