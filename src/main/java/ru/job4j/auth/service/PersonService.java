@@ -18,47 +18,55 @@ public interface PersonService {
      *
      * @return список всех пользователей
      */
-    List<Person> findAll();
+    List<PersonDTO> findAll();
 
     /**
      * Найти ползователя по идентификатору
      *
      * @param id идентфикатор пользователя
-     * @return Optional.of(person) если пользователь найден, иначе Optional.empty()
+     * @return Optional.of(personDTO) если пользователь найден, иначе Optional.empty()
      */
-    Optional<Person> findById(int id);
+    Optional<PersonDTO> findById(int id);
 
     /**
      * Найти пользователя в базе данных по логину
      *
      * @param login логин
-     * @return Optional.of(person) если пользователь найден, иначе Optional.empty()
+     * @return Optional.of(personDTO) если пользователь найден, иначе Optional.empty()
      */
-    Optional<Person> findByLogin(String login);
+    Optional<PersonDTO> findByLogin(String login);
+
+    /**
+     * Хешировать пароль пользователя и сохранить пользователя в базу данных
+     *
+     * @param personDTO объект типа PersonDTO
+     * @return Optional.of(person) если пользователь сохранен успешно, иначе Optional.empty()
+     */
+    Optional<Person> signUp(PersonDTO personDTO);
 
     /**
      * Сохранить пользователя в базе данных
      *
-     * @param person пользователь
+     * @param personDTO объект типа PersonDTO
      * @return Optional.of(person) если пользователь сохранен успешно, иначе Optional.empty()
      */
-    Optional<Person> save(Person person);
+    Optional<Person> save(PersonDTO personDTO);
 
     /**
      * Обновить пользователя в базе данных
      *
-     * @param person пользователь
+     * @param personDTO объект типа PersonDTO
      * @return true если пользователь успешно обновлен, иначе false
      */
-    boolean update(Person person);
+    boolean update(PersonDTO personDTO);
 
     /**
      * Удалить пользователя из базы данных
      *
-     * @param person пользователь
+     * @param id идентификатор пользователя
      * @return true если пользователь успешно удален, иначе false
      */
-    boolean delete(Person person);
+    boolean delete(int id);
 
     /**
      * Обновить пароль пользователя в базе данных

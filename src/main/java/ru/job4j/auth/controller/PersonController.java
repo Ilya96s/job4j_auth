@@ -3,14 +3,16 @@ package ru.job4j.auth.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.auth.dto.PersonDTO;
 import ru.job4j.auth.model.Person;
 import ru.job4j.auth.service.PersonService;
+import ru.job4j.auth.validation.Operation;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,8 +36,6 @@ public class PersonController {
      */
     private final PersonService personService;
 
-    private final BCryptPasswordEncoder passwordEncoder;
-
     /**
      * Функционал для работы с JSON
      */
@@ -44,19 +44,13 @@ public class PersonController {
     /**
      * Хешировать пароль пользователя и сохранить пользователя в базу данных
      *
-     * @param person пользователь
+     * @param personDTO пользователь
      * @return объект типа ResponseEntity
      */
+
     @PostMapping("/sign-up")
-    public ResponseEntity<Person> signUp(@RequestBody Person person) {
-        if (person.getLogin() == null || person.getPassword() == null) {
-            throw new NullPointerException("Login and password must not be empty");
-        }
-        if (person.getPassword().length() < 5) {
-            throw new IllegalStateException("Password must be at least 5 characters long");
-        }
-        person.setPassword(passwordEncoder.encode(person.getPassword()));
-        return personService.save(person).isPresent()
+    public ResponseEntity<PersonDTO> signUp(@Validated(Operation.OnCreate.class) @RequestBody PersonDTO personDTO) {
+        return personService.signUp(personDTO).isPresent()
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
@@ -67,7 +61,7 @@ public class PersonController {
      * @return список пользователей
      */
     @GetMapping("/")
-    public List<Person> findAll() {
+    public List<PersonDTO> findAll() {
         return personService.findAll();
     }
 
@@ -78,13 +72,13 @@ public class PersonController {
      * @return объект типа ResponseEntity
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Person> findById(@PathVariable int id) {
+    public ResponseEntity<PersonDTO> findById(@PathVariable int id) {
         var person = personService.findById(id);
         if (person.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Person with this id not found");
         }
-        return new ResponseEntity<Person>(
-                person.orElse(new Person()),
+        return new ResponseEntity<PersonDTO>(
+                person.orElse(new PersonDTO()),
                 HttpStatus.OK
         );
     }
@@ -92,19 +86,15 @@ public class PersonController {
     /**
      * Сохранить пользователя в базу данных
      *
-     * @param person пользователь
+     * @param personDTO объект типа PersonDTO
      * @return объект типа ResponseEntity
      */
     @PostMapping("/")
-    public ResponseEntity<Person> create(@RequestBody Person person) {
-        if (person.getLogin() == null || person.getPassword() == null) {
-            throw new NullPointerException("Login and password must not be empty");
-        }
-        if (person.getPassword().length() < 5) {
-            throw new IllegalArgumentException("Password must be at least 5 characters long");
-        }
-        return new ResponseEntity<Person>(
-                personService.save(person).get(),
+    public ResponseEntity<PersonDTO> create(@Validated(Operation.OnCreate.class) @RequestBody PersonDTO personDTO) {
+        var optionalPerson = personService.save(personDTO)
+                .map(p -> new ModelMapper().map(p, PersonDTO.class));
+        return new ResponseEntity<PersonDTO>(
+                optionalPerson.get(),
                 HttpStatus.CREATED
         );
     }
@@ -112,18 +102,12 @@ public class PersonController {
     /**
      * Обновить пользователя в базе данных
      *
-     * @param person пользователь
+     * @param personDTO объект типа PersonDTO
      * @return объект типа ResponseEntity
      */
     @PutMapping("/")
-    public ResponseEntity<Person> update(@RequestBody Person person) {
-        if (person.getLogin() == null || person.getPassword() == null) {
-            throw new NullPointerException("Login and password must not be empty");
-        }
-        if (person.getPassword().length() < 5) {
-            throw new IllegalArgumentException("Password must be at least 5 characters long");
-        }
-        return personService.update(person)
+    public ResponseEntity<PersonDTO> update(@Validated(Operation.OnUpdate.class) @RequestBody PersonDTO personDTO) {
+        return personService.update(personDTO)
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.notFound().build();
     }
@@ -135,7 +119,7 @@ public class PersonController {
      * @return объект типа ResponseEntity
      */
     @PatchMapping("/")
-    public ResponseEntity<PersonDTO> updatePassword(@RequestBody PersonDTO personDTO) {
+    public ResponseEntity<PersonDTO> updatePassword(@Validated(Operation.OnUpdate.class) @RequestBody PersonDTO personDTO) {
         var person = personService.findByLogin(personDTO.getLogin());
         if (person.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with this login was not found");
@@ -152,10 +136,10 @@ public class PersonController {
      * @return объект типа ResponseEntity
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Person> delete(@PathVariable int id) {
+    public ResponseEntity<PersonDTO> delete(@PathVariable int id) {
         var person = new Person();
         person.setId(id);
-        return personService.delete(person)
+        return personService.delete(id)
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.notFound().build();
     }
