@@ -20,7 +20,7 @@
 		<profile>
 			<id>test</id>
 			<properties>
-				<liquibase.config>db/liquibase.test.properties</liquibase.config>
+				<liquibase.config>src/main/resources/db/liquibase.test.properties</liquibase.config>
 			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
@@ -29,7 +29,7 @@
 		<profile>
 			<id>production</id>
 			<properties>
-				<liquibase.config>db/liquibase.properties</liquibase.config>
+				<liquibase.config>src/main/resources/db/liquibase.properties</liquibase.config>
 			</properties>
 		</profile>
 	</profiles>
@@ -81,6 +81,11 @@
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
 			<version>2.4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>3.6.2</version>
 		</dependency>
 	</dependencies>
 
