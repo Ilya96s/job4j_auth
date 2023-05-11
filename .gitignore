@@ -19,6 +19,8 @@ target/
 *.iml
 .mvn
 *.ipr
+testdb.mv.db
+testdb.trace.db
 
 ### NetBeans ###
 /nbproject/private/
