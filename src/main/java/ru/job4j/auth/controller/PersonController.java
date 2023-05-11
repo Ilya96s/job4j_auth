@@ -56,7 +56,9 @@ public class PersonController {
             throw new IllegalStateException("Password must be at least 5 characters long");
         }
         person.setPassword(passwordEncoder.encode(person.getPassword()));
-        return personService.save(person).isPresent() ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.CONFLICT).build();
+        return personService.save(person).isPresent()
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
     /**
@@ -121,7 +123,9 @@ public class PersonController {
         if (person.getPassword().length() < 5) {
             throw new IllegalArgumentException("Password must be at least 5 characters long");
         }
-        return personService.update(person) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+        return personService.update(person)
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
     }
 
     /**
@@ -136,7 +140,9 @@ public class PersonController {
         if (person.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with this login was not found");
         }
-        return personService.updatePassword(personDTO) ? ResponseEntity.status(HttpStatus.OK).build() : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return personService.updatePassword(personDTO)
+                ? ResponseEntity.status(HttpStatus.OK).build()
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     /**
@@ -149,7 +155,9 @@ public class PersonController {
     public ResponseEntity<Person> delete(@PathVariable int id) {
         var person = new Person();
         person.setId(id);
-        return personService.delete(person) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+        return personService.delete(person)
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
     }
 
     /**
@@ -161,7 +169,9 @@ public class PersonController {
      * @throws IOException exception
      */
     @ExceptionHandler(value = {IllegalArgumentException.class})
-    public void handleException(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void handleException(Exception e,
+                                HttpServletRequest request,
+                                HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         response.setContentType("application/json");
         response.getWriter().write(objectMapper.writeValueAsString(new HashMap<>() {

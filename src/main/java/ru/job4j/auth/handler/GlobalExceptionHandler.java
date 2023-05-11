@@ -36,7 +36,9 @@ public class GlobalExceptionHandler {
      * @throws IOException exception
      */
     @ExceptionHandler(value = {NullPointerException.class})
-    public void handleException(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void handleException(Exception e,
+                                HttpServletRequest request,
+                                HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         response.setContentType("application/json");
         response.getWriter().write(objectMapper.writeValueAsString(new HashMap<>() {

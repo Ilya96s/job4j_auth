@@ -51,7 +51,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
      * @throws AuthenticationException exception
      */
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
+    public Authentication attemptAuthentication(HttpServletRequest req,
+                                                HttpServletResponse res)
             throws AuthenticationException {
         try {
             Person creds = new ObjectMapper()
